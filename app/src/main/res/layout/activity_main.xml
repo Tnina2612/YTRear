@@ -225,61 +225,13 @@
                 android:text="@string/advanced_note"
                 android:textAppearance="?attr/textAppearanceBodySmall" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRefresh"
-                    style="@style/Widget.YTRear.Button.Diagnostic"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:text="@string/action_refresh" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnOverlayPerm"
-                    style="@style/Widget.YTRear.Button.Diagnostic"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_weight="1"
-                    android:text="@string/action_overlay_permission" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActivity"
-                    style="@style/Widget.YTRear.Button.Diagnostic"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:text="@string/action_show_activity" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnService"
-                    style="@style/Widget.YTRear.Button.Diagnostic"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_weight="1"
-                    android:text="@string/action_show_service" />
-            </LinearLayout>
-
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnHide"
+                android:id="@+id/btnRefresh"
                 style="@style/Widget.YTRear.Button.Diagnostic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/action_hide" />
+                android:layout_marginTop="8dp"
+                android:text="@string/action_refresh" />
 
             <TextView
                 android:layout_width="match_parent"

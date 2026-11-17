@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.1 - 2026-11-17
+
+- Expanded `PlayerSelection.NATIVE_REAR_PLAYERS` to match HyperOS's full compiled rear-music
+  allowlist (`com.xiaomi.music`, `com.miui.player`, `com.tencent.qqmusic`,
+  `com.netease.cloudmusic`, `com.kugou.android`, `cn.kuwo.player`, and `com.spotify.music`), so
+  apps that the firmware already drives natively on the rear screen are omitted from both manual
+  selection and auto-detection.
+- Removed the obsolete `android.permission.SYSTEM_ALERT_WINDOW` permission and historical
+  overlay/custom-widget probe components (`OverlayService`, `RearWindow`, `RearNotification`, and
+  `rear_widget.xml`), keeping the read-only session, display, and log diagnostics under
+  **Advanced**.
+- Added a GitHub Actions CI workflow (`.github/workflows/ci.yml`) that runs
+  `./gradlew :app:assembleDebug :app:lintDebug` and uploads the built debug APK and lint report on
+  pushes and pull requests.
+- Bumped the candidate to version 1.4.1 (`versionCode 17`).
+
 ## 1.4.0 - 2026-11-17
 
 - Added opt-in **Auto-detect active player** mode (`PlayerSelection.Mode.AUTO`) alongside the

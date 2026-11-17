@@ -9,7 +9,7 @@
     <string name="auto_player_waiting">Player: Auto-detect</string>
     <string name="auto_player_active">Player: Auto (%1$s)</string>
     <string name="choose_player_title">Which player do you want to proxy?</string>
-    <string name="player_picker_detail">Choose auto-detect to follow whichever music app starts playing, or pick one app with a standard Android media session. Spotify is omitted because Xiaomi supports it on the rear screen natively.</string>
+    <string name="player_picker_detail">Choose auto-detect to follow whichever music app starts playing, or pick one app with a standard Android media session. Apps that Xiaomi already supports on the rear screen natively (such as Spotify, Xiaomi Music, QQ Music, and NetEase Cloud Music) are omitted.</string>
     <string name="auto_detect_option_title">Auto-detect active player</string>
     <string name="auto_detect_option_summary">Switch automatically to whichever eligible app starts playing</string>
     <string name="excluded_apps_none">Excluded apps: None</string>
@@ -48,12 +48,8 @@
     <!-- Diagnostics -->
     <string name="show_advanced">Advanced</string>
     <string name="hide_advanced">Hide advanced</string>
-    <string name="advanced_note">Developer probes from the rear-display research. Not needed for daily use.</string>
+    <string name="advanced_note">Live session, display, and proxy diagnostics. Not needed for daily use.</string>
     <string name="action_refresh">Refresh</string>
-    <string name="action_overlay_permission">Overlay permission</string>
-    <string name="action_show_activity">Show (activity)</string>
-    <string name="action_show_service">Show (service)</string>
-    <string name="action_hide">Hide rear overlay</string>
     <string name="label_status">Status</string>
     <string name="label_displays">Displays</string>
     <string name="label_log">Log</string>

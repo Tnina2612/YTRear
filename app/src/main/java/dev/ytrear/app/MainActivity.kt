@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -21,7 +20,6 @@ import dev.ytrear.app.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var b: ActivityMainBinding
-    private val rear by lazy { RearWindow(this) }
 
     /** Keeps the now-playing card live while the activity is in front. */
     private val mediaListener = MediaHub.Listener { runOnUiThread { refresh() } }
@@ -55,10 +53,6 @@ class MainActivity : AppCompatActivity() {
         b.btnController.setOnClickListener { startSelectedPlayerProxy() }
         b.btnAdvanced.setOnClickListener { toggleAdvanced() }
         b.btnRefresh.setOnClickListener { refresh() }
-        b.btnActivity.setOnClickListener { showFromActivity() }
-        b.btnService.setOnClickListener { showFromService() }
-        b.btnHide.setOnClickListener { hideAll() }
-        b.btnOverlayPerm.setOnClickListener { requestOverlay() }
 
         refresh()
         handleProbeExtra(intent)
@@ -75,23 +69,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /** Lets the probe be driven over adb: -e probe activity|service|hide */
+    /** Lets the player mode be driven over adb: -e probe auto|manual */
     private fun handleProbeExtra(intent: Intent?) {
         when (intent?.getStringExtra("probe")) {
-            "activity" -> showFromActivity()
-            "service" -> showFromService()
-            "hide" -> hideAll()
-            "main" -> showOnDisplay(android.view.Display.DEFAULT_DISPLAY)
-            "notif" -> RearNotification.post(
-                this,
-                intent.getStringExtra("title") ?: "YTRear",
-                intent.getStringExtra("artist") ?: "Rear widget probe",
-                playing = intent.getBooleanExtra("playing", true),
-                business = intent.getStringExtra("business") ?: "music"
-            )
-            "notifoff" -> RearNotification.cancel(this)
-            // Temporary test hooks until the mode UI lands:
-            //   adb shell am start -n com.luna.music/dev.ytrear.app.MainActivity -e probe auto
             "auto" -> applyPlayerMode(PlayerSelection.Mode.AUTO)
             "manual" -> applyPlayerMode(PlayerSelection.Mode.MANUAL)
         }
@@ -205,8 +185,7 @@ class MainActivity : AppCompatActivity() {
             append("Target session: ${nowPlaying?.title?.ifBlank { "active" } ?: "not active"}\n")
             append("Allowlisted proxy: ${if (NativeMediaProxy.active) "ACTIVE" else "INACTIVE"}\n")
             append("Displays: ${displays.size}\n")
-            append("Rear pick: ${rearDisplay?.displayId ?: "none"}\n")
-            append("Overlay permission: ${if (Settings.canDrawOverlays(this@MainActivity)) "GRANTED" else "MISSING"}")
+            append("Rear pick: ${rearDisplay?.displayId ?: "none"}")
         }
     }
 
@@ -318,53 +297,6 @@ class MainActivity : AppCompatActivity() {
         refresh()
     }
 
-    private fun showFromActivity() {
-        val display = Displays.pickRear(this)
-        if (display == null) {
-            Probe.log("ACTIVITY: no secondary display found")
-            return
-        }
-        Probe.log("ACTIVITY: targeting display ${Displays.describe(display)}")
-        rear.show(display)
-    }
-
-    /** Control test: same overlay window, aimed at an explicit display id. */
-    private fun showOnDisplay(id: Int) {
-        val display = Displays.manager(this).getDisplay(id)
-        if (display == null) {
-            Probe.log("CONTROL: display $id not found")
-            return
-        }
-        Probe.log("CONTROL: targeting display ${Displays.describe(display)}")
-        rear.show(display)
-    }
-
-    private fun showFromService() {
-        if (!Settings.canDrawOverlays(this)) {
-            Probe.log("SERVICE: overlay permission missing -- grant it first")
-            return
-        }
-        OverlayService.send(this, OverlayService.ACTION_SHOW)
-    }
-
-    private fun hideAll() {
-        hideActivityPresentation()
-        OverlayService.send(this, OverlayService.ACTION_HIDE)
-    }
-
-    private fun hideActivityPresentation() {
-        rear.hide()
-    }
-
-    private fun requestOverlay() {
-        startActivity(
-            Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:$packageName")
-            )
-        )
-    }
-
     override fun onResume() {
         super.onResume()
         if (
@@ -396,7 +328,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         Probe.sink = null
-        hideActivityPresentation()
         super.onDestroy()
     }
 

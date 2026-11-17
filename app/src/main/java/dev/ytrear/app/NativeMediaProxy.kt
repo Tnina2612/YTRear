@@ -25,6 +25,7 @@ import androidx.core.graphics.get
 object NativeMediaProxy {
 
     private const val CHANNEL = "proxy_media"
+    private const val LEGACY_CUSTOM_WIDGET_NOTIF_ID = 77
     const val NOTIF_ID = 78
     private const val OPEN_YOUTUBE_MUSIC_REQUEST_CODE = 79
     private const val MAX_ART_EDGE = 320
@@ -517,7 +518,7 @@ object NativeMediaProxy {
             context,
             which.hashCode(),
             Intent(context, RearButtonReceiver::class.java)
-                .setAction(RearNotification.ACTION_BUTTON)
+                .setAction(RearButtonReceiver.ACTION_BUTTON)
                 .putExtra(RearButtonReceiver.EXTRA_BUTTON, which),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -588,7 +589,7 @@ object NativeMediaProxy {
 
     private fun clearCustomWidgetOnce(context: Context) {
         if (customWidgetCleared) return
-        RearNotification.cancel(context)
+        context.getSystemService(NotificationManager::class.java).cancel(LEGACY_CUSTOM_WIDGET_NOTIF_ID)
         customWidgetCleared = true
     }
 

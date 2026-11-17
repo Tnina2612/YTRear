@@ -1,5 +1,36 @@
 # YTRear testing
 
+## Version 1.4.1 cleanup candidate
+
+Version 1.4.1 keeps the 1.4.0 auto-detect mode unchanged and tightens the app around it: the full
+HyperOS rear-music allowlist is now excluded from both the picker and auto-detection, the obsolete
+`SYSTEM_ALERT_WINDOW` permission and overlay/custom-widget probes are gone, and GitHub Actions CI
+runs the same build and lint commands as this page.
+
+### Automated check - 2026-11-17
+
+- [x] Clean `assembleDebug` and `lintDebug` completed with zero lint errors (8 pre-existing
+  dependency/label warnings).
+- [x] The packaged APK reports `com.luna.music`, `versionCode 17`, `versionName 1.4.1`.
+- [x] `aapt dump badging` lists only `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE`, and
+  `POST_NOTIFICATIONS`; `android.permission.SYSTEM_ALERT_WINDOW` is absent.
+- [x] `gradlew`, `gradlew.bat`, and `gradle/wrapper/*` are tracked, so the new CI workflow can run
+  on a clean checkout.
+
+No device was attached while this candidate was packaged, so the on-device checks stay open:
+
+- [ ] Install 1.4.1 over 1.4.0 and confirm notification access and the saved player survive.
+- [ ] Confirm `Spotify`, `QQ Music`, and the other HyperOS-native players no longer appear in the
+  picker or the **Excluded apps** list, and that auto-detect skips them while playing.
+- [ ] Confirm an app outside that allowlist (`SoundCloud`, `YT Music Morphe`) still becomes the auto
+  target and completes a bidirectional handoff.
+- [ ] Confirm the picker, auto-detect, exclusions, and the collapsed **Advanced** panel render
+  without the removed overlay buttons.
+- [ ] Re-run the complete 1.4.0 check list below.
+
+The packaged 1.4.1 candidate APK SHA-256 is
+`1D0CEEDCE8DA1218B52E362330CD1CBDCC97F2397A09A5246C45DF458EDE9F38`.
+
 ## Version 1.4.0 auto-detect player candidate
 
 Version 1.4.0 adds an opt-in **Auto-detect active player** mode (`PlayerSelection.Mode.AUTO`) on

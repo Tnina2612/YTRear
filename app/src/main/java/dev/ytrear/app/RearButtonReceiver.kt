@@ -4,11 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-/** Receives the immutable PendingIntents embedded in the rear RemoteViews. */
+/** Receives the immutable PendingIntents embedded in the proxy media notification actions. */
 class RearButtonReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != RearNotification.ACTION_BUTTON) return
+        if (intent.action != ACTION_BUTTON) return
 
         val button = intent.getStringExtra(EXTRA_BUTTON) ?: return
         if (!MediaHub.attach(context.applicationContext)) {
@@ -30,6 +30,7 @@ class RearButtonReceiver : BroadcastReceiver() {
     }
 
     companion object {
+        const val ACTION_BUTTON = "dev.ytrear.app.REAR_BUTTON"
         const val EXTRA_BUTTON = "which"
         const val BUTTON_PREVIOUS = "prev"
         const val BUTTON_PLAY_PAUSE = "playpause"

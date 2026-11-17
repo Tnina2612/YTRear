@@ -17,8 +17,22 @@ import java.util.Locale
 object PlayerSelection {
 
     const val YOUTUBE_MUSIC = "com.google.android.apps.youtube.music"
-    private const val SPOTIFY = "com.spotify.music"
-    private val NATIVE_REAR_PLAYERS = setOf(SPOTIFY)
+
+    /**
+     * Packages in HyperOS's compiled rear-music allowlist (`com.xiaomi.subscreencenter`),
+     * excluding `com.luna.music` which is this app's own installed applicationId. Because the
+     * firmware drives their native rear widget directly, they are omitted from both the manual
+     * picker and auto-detection.
+     */
+    private val NATIVE_REAR_PLAYERS = setOf(
+        "com.xiaomi.music",
+        "com.miui.player",
+        "com.tencent.qqmusic",
+        "com.netease.cloudmusic",
+        "com.kugou.android",
+        "cn.kuwo.player",
+        "com.spotify.music"
+    )
 
     enum class Mode { MANUAL, AUTO }
 

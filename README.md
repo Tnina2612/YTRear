@@ -3,10 +3,22 @@
 Control a selected Android music player from the Xiaomi 17 Pro rear "Magic Back Screen" while the
 main display is off. Runs on a locked, non-rooted phone — no Shizuku, no privileged install.
 
-Current build: **1.4.0** (`versionCode 16`) — auto-detect the most recently active player or pick
+Current build: **1.4.1** (`versionCode 17`) — auto-detect the most recently active player or pick
 any specific app. See the [changelog](CHANGELOG.md) for what changed, and
 [releases](https://github.com/megadonkatsu/YTRear/releases) for the signed APK. Version 1.2 remains
 the tagged stable baseline.
+
+## What's new in 1.4.1
+
+- **Full HyperOS native-player allowlist exclusion.** Every music app that HyperOS already supports
+  natively on the rear screen (`Spotify`, `Xiaomi Music`, `QQ Music`, `NetEase Cloud Music`,
+  `Kugou`, and `Kuwo`) is now skipped by both the manual picker and auto-detection so the firmware's
+  native widget handles them directly.
+- **No overlay permission required.** Removed `SYSTEM_ALERT_WINDOW` and the obsolete early-research
+  overlay/custom-widget probes. YTRear now requests only notification and foreground-service
+  permissions.
+- **Automated CI.** Added GitHub Actions CI to verify `:app:assembleDebug` and `:app:lintDebug` on
+  every push and pull request.
 
 ## What's new in 1.4.0
 
@@ -78,7 +90,7 @@ Selected player's MediaSession
 ## Install
 
 Download the APK from the [latest release](https://github.com/megadonkatsu/YTRear/releases) and
-sideload it — copy it to the phone and tap it, or `adb install -r YTRear-1.4.0-debug.apk`. HyperOS
+sideload it — copy it to the phone and tap it, or `adb install -r YTRear-1.4.1-debug.apk`. HyperOS
 will ask you to allow installs from whichever app you opened it with. Each release ships a
 `.sha256` file; check it against your download before installing.
 
@@ -90,8 +102,6 @@ Then grant these, all on YTRear:
 | **Notifications** | The prompt on first launch | YTRear's rear-screen card *is* a notification. Denying this breaks the widget. |
 | **Autostart** | HyperOS app info → Autostart | Lets the listener rebind after a reboot or a restart of the selected player. |
 | **Battery saver: No restrictions** | HyperOS app info → Battery saver | Stops HyperOS killing the proxy while the screen is off. |
-
-Display over other apps is only used by the diagnostic probes under **Advanced**. Skip it.
 
 Open YTRear and choose how to select a player. Pick **Auto-detect active player** at the top of the
 list to follow whichever music app starts playing, or select one specific app to mirror. Grant the
@@ -114,8 +124,9 @@ The selected app must publish a standard Android `MediaSession`. Play/pause, nex
 metadata, and artwork depend on what that session exposes. Apps without a media session can still
 be selected, but YTRear will remain at **Waiting for music**.
 
-Spotify is intentionally omitted from the picker because this Xiaomi firmware already supports it
-on the rear screen without a proxy.
+Apps in HyperOS's compiled rear-music allowlist (such as Spotify, Xiaomi Music, QQ Music, NetEase
+Cloud Music, Kugou, and Kuwo) are intentionally omitted from both the picker and auto-detection
+because this Xiaomi firmware already supports them on the rear screen without a proxy.
 
 The selected player's MediaStyle notification is snoozed while YTRear supplies the replacement
 player. This prevents the original app from taking back HyperOS's top-media rank and collapsing the

@@ -199,7 +199,7 @@ object PlayerSelection {
 
     // --- notification restore bookkeeping ----------------------------------
 
-    private fun queueRestore(context: Context, packageName: String) {
+    internal fun queueRestore(context: Context, packageName: String) {
         val preferences = prefs(context)
         val pending = preferences
             .getStringSet(KEY_PENDING_RESTORE_PACKAGES, emptySet())

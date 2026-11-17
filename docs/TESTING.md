@@ -1,5 +1,50 @@
 # YTRear testing
 
+## Version 1.5.0 battery, tile, and picker candidate
+
+Version 1.5.0 keeps the 1.4.1 behavior and adds three user-facing changes: a battery-optimization
+setup prompt, a Quick Settings tile that turns the proxy on or off, and launcher icons in the
+player picker.
+
+### Automated and on-device check - 2026-11-17
+
+- [x] `assembleDebug` and `lintDebug` completed with zero lint errors (8 pre-existing
+  dependency/label warnings).
+- [x] The packaged APK reports `com.luna.music`, `versionCode 18`, `versionName 1.5.0`, and installs
+  over 1.4.1 with notification access and the saved auto-detect selection intact.
+- [x] `aapt dump badging` lists `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` alongside the existing
+  foreground-service and notification permissions.
+- [x] The **Quick Settings** tile appears in the shade and reads active (blue) while the service is
+  running and the target is configured.
+- [x] Tapping the tile while active stops `RearControlService`, clears the proxy session, removes
+  YTRear's notifications 76/78, releases the selected player's 30-day snooze, and restores its
+  native media card. Both snooze lists were empty afterwards and the tile turned grey.
+- [x] Tapping the tile again restarts the service, republishes notifications 76/78, and re-snoozes
+  the selected player's `MediaStyle` notification.
+- [x] HyperOS delivered one physical tap as two `onClick` callbacks during the tile test; the
+  600 ms debounce keeps one tap to one toggle.
+- [x] The **Player** picker pins the bold auto-detect row first with a tinted sync icon and renders
+  each app's launcher icon beside its name and package.
+- [x] The **Set battery to No restrictions** button follows the Doze whitelist. Removing the entry
+  with `cmd deviceidle whitelist -com.luna.music`, restarting the activity, and dumping the UI showed
+  the button on the main screen; restoring the entry hid it again. The phone was left on the
+  whitelist.
+
+The system request dialog itself was not exercised because adb input injection is blocked by the
+firmware (`INJECT_EVENTS`), so these taps still need a person:
+
+- [ ] With the app off the whitelist, tap **Set battery to No restrictions** and confirm the HyperOS
+  permission screen opens from the direct request (or the fallback screens).
+- [ ] Grant the exemption through that screen and confirm the button disappears on return and
+  diagnostics read `Battery optimization: IGNORED`.
+- [ ] Re-capture the **Excluded apps** dialog and the collapsed **Advanced** panel with the new
+  picker row layout.
+- [ ] Re-run the 1.4.1 auto-detect and handoff checks with the tile's off state (no snoozing while
+  the service is stopped).
+
+The packaged 1.5.0 candidate APK SHA-256 is
+`E4088CD034A2D72D07414FAAC79523A984E147B8F801C3DEA9B8C89D44084664`.
+
 ## Version 1.4.1 cleanup candidate
 
 Version 1.4.1 keeps the 1.4.0 auto-detect mode unchanged and tightens the app around it: the full

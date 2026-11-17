@@ -27,6 +27,8 @@ class RearControlService : Service() {
         isRunning = true
         startForeground(NOTIF_ID, foregroundNotification())
         beginObserving()
+        // Re-snooze the selected player whenever the proxy is turned back on.
+        MediaNotificationListener.targetChanged(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -52,7 +54,12 @@ class RearControlService : Service() {
             observing = false
         }
         isRunning = false
-        if (!MediaNotificationListener.isConnected) {
+        if (stopping) {
+            stopping = false
+            NativeMediaProxy.clear(this)
+            MediaHub.detach()
+            MediaNotificationListener.restoreCurrentTarget(this)
+        } else if (!MediaNotificationListener.isConnected) {
             NativeMediaProxy.clear(this)
             MediaHub.detach()
         }
@@ -99,11 +106,26 @@ class RearControlService : Service() {
         private const val NOTIF_ID = 76
 
         @Volatile
+        private var stopping = false
+
+        @Volatile
         var isRunning = false
             private set
 
         fun start(context: Context) {
             context.startForegroundService(Intent(context, RearControlService::class.java))
+        }
+
+        /** Turns the proxy off and returns the selected player's own media notification. */
+        fun stop(context: Context) {
+            val app = context.applicationContext
+            stopping = true
+            if (!app.stopService(Intent(app, RearControlService::class.java))) {
+                stopping = false
+                NativeMediaProxy.clear(app)
+                MediaHub.detach()
+                MediaNotificationListener.restoreCurrentTarget(app)
+            }
         }
     }
 }

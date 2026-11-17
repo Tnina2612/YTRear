@@ -3,10 +3,23 @@
 Control a selected Android music player from the Xiaomi 17 Pro rear "Magic Back Screen" while the
 main display is off. Runs on a locked, non-rooted phone — no Shizuku, no privileged install.
 
-Current build: **1.4.1** (`versionCode 17`) — auto-detect the most recently active player or pick
+Current build: **1.5.0** (`versionCode 18`) — auto-detect the most recently active player or pick
 any specific app. See the [changelog](CHANGELOG.md) for what changed, and
 [releases](https://github.com/megadonkatsu/YTRear/releases) for the signed APK. Version 1.2 remains
 the tagged stable baseline.
+
+## What's new in 1.5.0
+
+- **Battery setup is now part of onboarding.** The main screen keeps a **Set battery to No
+  restrictions** button visible until YTRear is exempt from battery optimization, so HyperOS's
+  Greezer cannot freeze the process five seconds after you leave the app or turn the screen off. The
+  diagnostics panel reports the current state.
+- **Quick Settings tile.** Add YTRear to the shade to turn the rear-screen proxy on or off with one
+  tap, without opening the app. Turning it off clears the proxy and returns your selected player's
+  own media notification; turning it on restores both. The tile is only active once notification
+  access is granted and a player is configured, and a tap during setup opens YTRear.
+- **Icons in the player picker.** The picker now shows each app's launcher icon and keeps the
+  auto-detect row pinned first, loading icons off the main thread so scrolling stays smooth.
 
 ## What's new in 1.4.1
 
@@ -90,7 +103,7 @@ Selected player's MediaSession
 ## Install
 
 Download the APK from the [latest release](https://github.com/megadonkatsu/YTRear/releases) and
-sideload it — copy it to the phone and tap it, or `adb install -r YTRear-1.4.1-debug.apk`. HyperOS
+sideload it — copy it to the phone and tap it, or `adb install -r YTRear-1.5.0-debug.apk`. HyperOS
 will ask you to allow installs from whichever app you opened it with. Each release ships a
 `.sha256` file; check it against your download before installing.
 
@@ -101,7 +114,7 @@ Then grant these, all on YTRear:
 | **Notification access** | Settings → Apps → Special app access → Notification access | Required. This is how YTRear reads the selected player's media session. Nothing works without it. |
 | **Notifications** | The prompt on first launch | YTRear's rear-screen card *is* a notification. Denying this breaks the widget. |
 | **Autostart** | HyperOS app info → Autostart | Lets the listener rebind after a reboot or a restart of the selected player. |
-| **Battery saver: No restrictions** | HyperOS app info → Battery saver | Stops HyperOS killing the proxy while the screen is off. |
+| **Battery saver: No restrictions** | YTRear main screen → **Set battery to No restrictions** (or HyperOS app info → Battery saver) | Stops HyperOS freezing the proxy while the screen is off. The button stays visible until the exemption is granted. |
 
 Open YTRear and choose how to select a player. Pick **Auto-detect active player** at the top of the
 list to follow whichever music app starts playing, or select one specific app to mirror. Grant the
@@ -113,7 +126,9 @@ In **Auto-detect** mode, YTRear remembers the mode and the last active player ac
 reboots; starting playback in another eligible player switches the rear card automatically, and
 **Excluded apps** lets you ignore specific apps. In **Manual** mode, YTRear asks for the target
 whenever its main screen is opened and remembers the current selection. Use **Player** on the main
-screen to change modes or targets at any time.
+screen to change modes or targets at any time. For a quicker toggle, add **YTRear** to the Quick
+Settings shade: one tap turns the proxy off and hands your player's own media notification back, and
+another tap turns it on again.
 
 Don't swipe YTRear away from Recents. HyperOS treats that as a force-stop and will refuse to rebind
 the notification listener until you reopen the app.
@@ -145,8 +160,8 @@ alone:
 Expect the selected player's media notification to vanish from the shade while YTRear is running.
 That is deliberate, not a fault: if both appear in SystemUI, HyperOS drops YTRear's Dynamic Island
 entry during a skip. Playback is untouched, and YTRear's card becomes the visible player. To get
-the native notification back, turn off YTRear's notification access, then force-stop and reopen
-the player.
+the native notification back, tap YTRear's Quick Settings tile off (or disable YTRear's notification
+access), then force-stop and reopen the player.
 
 When another player is selected, YTRear automatically releases the previous player's snoozed
 notification. If that player is still running, its notification can return immediately; otherwise,

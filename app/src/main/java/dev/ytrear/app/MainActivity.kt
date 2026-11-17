@@ -1,17 +1,21 @@
 package dev.ytrear.app
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -50,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         b.btnChoosePlayer.setOnClickListener { showPlayerPicker() }
         b.btnExcludedPlayers.setOnClickListener { showExcludedPlayers() }
         b.btnNotificationAccess.setOnClickListener { openNotificationAccess() }
+        b.btnBatteryAccess.setOnClickListener { openBatterySettings() }
         b.btnController.setOnClickListener { startSelectedPlayerProxy() }
         b.btnAdvanced.setOnClickListener { toggleAdvanced() }
         b.btnRefresh.setOnClickListener { refresh() }
@@ -136,6 +141,7 @@ class MainActivity : AppCompatActivity() {
 
         // Setup step one disappears for good once it is done; step two stays as a manual retry.
         b.btnNotificationAccess.isVisible = !access
+        b.btnBatteryAccess.isVisible = !isIgnoringBatteryOptimizations()
         b.btnChoosePlayer.text = when {
             isAuto && targetLabel != null -> getString(R.string.auto_player_active, targetLabel)
             isAuto -> getString(R.string.auto_player_waiting)
@@ -180,6 +186,10 @@ class MainActivity : AppCompatActivity() {
             )
             append("Excluded apps: ${PlayerSelection.autoExcludedPackages(this@MainActivity).size}\n")
             append("Notification access: ${if (access) "GRANTED" else "MISSING"}\n")
+            append(
+                "Battery optimization: " +
+                    "${if (isIgnoringBatteryOptimizations()) "IGNORED" else "OPTIMIZED"}\n"
+            )
             append("Media session access: ${if (MediaHub.connected) "CONNECTED" else "DISCONNECTED"}\n")
             append("Rear control service: ${if (RearControlService.isRunning) "RUNNING" else "STOPPED"}\n")
             append("Target session: ${nowPlaying?.title?.ifBlank { "active" } ?: "not active"}\n")
@@ -201,6 +211,38 @@ class MainActivity : AppCompatActivity() {
 
     private fun openNotificationAccess() {
         startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+
+    private fun isIgnoringBatteryOptimizations(): Boolean =
+        getSystemService(PowerManager::class.java)
+            ?.isIgnoringBatteryOptimizations(packageName) == true
+
+    /**
+     * HyperOS freezes background processes unless the app is exempt from battery optimization.
+     * Prefer the direct request dialog, then the optimization list, then the app info page where
+     * HyperOS exposes its own "Battery saver" entry.
+     */
+    @SuppressLint("BatteryLife")
+    private fun openBatterySettings() {
+        val candidates = listOf(
+            Intent(
+                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                "package:$packageName".toUri()
+            ),
+            Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS),
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                "package:$packageName".toUri()
+            )
+        )
+        for (intent in candidates) {
+            try {
+                startActivity(intent)
+                return
+            } catch (_: ActivityNotFoundException) {
+                // Try the next, less specific screen.
+            }
+        }
     }
 
     private fun showPlayerPicker() {

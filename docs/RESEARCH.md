@@ -209,6 +209,7 @@ firmware and should not be resumed unless the firmware or product constraints ch
 | 1.3.2 | Switching players reschedules the previous player's snoozed notification to 250 ms so its native card returns |
 | 1.4.0 | Opt-in auto-detect mode follows the most recently playing eligible session with leading-edge rank priming and per-app exclusions |
 | 1.4.1 | Full HyperOS native rear-player allowlist excluded; obsolete `SYSTEM_ALERT_WINDOW` and overlay/custom-widget probes removed; GitHub Actions CI added |
+| 1.5.0 | Battery-optimization setup prompt, Quick Settings on/off tile, and app icons in the player picker |
 
 Old APK sizes, hashes, transient installation state, and superseded handoff instructions were
 removed from the active documentation. The raw device traces behind these findings were captured
@@ -224,9 +225,11 @@ on a personal device and are not published; the durable conclusions are recorded
 | `MediaNotificationListener.kt` | Maintains session access, snoozes the active target's MediaStyle notification, and restores previous targets |
 | `NativeMediaProxy.kt` | Owns the allowlisted session, media notification, artwork refresh, and rank pulses |
 | `RearController.kt` | Debounces state and guards ranking/track and target transitions |
-| `RearControlService.kt` | Keeps the proxy controller alive in a foreground service |
+| `RearControlService.kt` | Keeps the proxy controller alive in a foreground service and tears it down cleanly on an explicit stop |
+| `YTRearTileService.kt` | Quick Settings tile that toggles the proxy and opens the app when setup is incomplete |
 | `RearButtonReceiver.kt` | Forwards compact media-notification action taps into `MediaHub` |
 | `MainActivity.kt` | Setup/status UI plus collapsed read-only diagnostics |
+| `PlayerPickerDialog.kt`, `AppIcons.kt` | Searchable picker and its background launcher-icon loader |
 | `Displays.kt`, `Probe.kt` | Display enumeration and in-memory diagnostic log |
 
 The installed package is `com.luna.music`, but the source namespace remains
@@ -252,6 +255,11 @@ com.luna.music/dev.ytrear.app.MainActivity
   `DISABLED`.
 - Do not swipe YTRear from Recents during normal use. HyperOS treats it as a force-stop and may
   reject notification-listener rebinding.
+- HyperOS's Greezer freezes a backgrounded app within about five seconds (`reason: tobg`, or
+  `reason: screen_off` when the display turns off) unless it is exempt from battery optimization.
+  A frozen process leaves `MediaController` callbacks queued in the binder and the rear card stale,
+  so the app now checks `PowerManager.isIgnoringBatteryOptimizations()` and offers the system
+  request. Verify with `dumpsys deviceidle whitelist | Select-String com.luna.music`.
 - Physical input cannot be automated on this phone because adb input injection lacks
   `INJECT_EVENTS`; final rear-panel checks require a person.
 - Version 1.2 intentionally replaces YouTube Music's visible media notification with YTRear's.

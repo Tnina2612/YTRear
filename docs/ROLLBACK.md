@@ -29,7 +29,14 @@ releases\YTRear-1.3.2-player-picker-candidate.apk
 SHA-256 9E1314CF8359614F9562A569C7E1CE0950A7D57F295C56550CC7C6A34B995D3E
 ```
 
-The current 1.4.1 cleanup candidate is:
+The current 1.5.0 battery/tile/picker candidate is:
+
+```text
+app\build\outputs\apk\debug\app-debug.apk (1.5.0, versionCode 18)
+SHA-256 E4088CD034A2D72D07414FAAC79523A984E147B8F801C3DEA9B8C89D44084664
+```
+
+The previous 1.4.1 cleanup candidate is:
 
 ```text
 app\build\outputs\apk\debug\app-debug.apk (1.4.1, versionCode 17)

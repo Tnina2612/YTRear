@@ -21,6 +21,7 @@
     <string name="keep_current_player">Keep current</string>
     <string name="not_now">Not now</string>
     <string name="enable_notification_access">Enable notification access</string>
+    <string name="allow_unrestricted_battery">Set battery to No restrictions</string>
     <string name="start_rear_controls">Start rear controls</string>
     <string name="refresh_rear_controls">Refresh rear controls</string>
     <string name="daily_hint">Choose a player, then open it and press play — the rear card appears on its own.</string>
@@ -44,6 +45,13 @@
     <string name="unknown_track">Unknown track</string>
     <string name="unknown_artist">Unknown artist</string>
     <string name="album_art">Album art</string>
+
+    <!-- Quick Settings tile -->
+    <string name="tile_setup_needed">Setup needed</string>
+    <string name="tile_off">Tap to turn on</string>
+    <string name="tile_on">Rear controls on</string>
+    <string name="tile_auto">Auto · %1$s</string>
+    <string name="tile_manual">Manual · %1$s</string>
 
     <!-- Diagnostics -->
     <string name="show_advanced">Advanced</string>

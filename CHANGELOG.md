@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.5.0 - 2026-11-17
+
+- Added a battery setup prompt: the main screen checks
+  `PowerManager.isIgnoringBatteryOptimizations()` and keeps a **Set battery to No restrictions**
+  button visible until YTRear is exempt. It opens
+  `ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`, falling back to the optimization list and the app
+  info page, and the diagnostics panel now reports `Battery optimization: IGNORED|OPTIMIZED`.
+- Added a **Quick Settings tile** that turns the rear-screen proxy on or off with one tap. A short
+  tap stops the foreground service, clears the proxy, and returns the selected player's own media
+  notification; tapping again restarts the proxy and re-snoozes that notification. The tile is
+  active only when notification access is granted, a player is configured, and the service is
+  running; when setup is incomplete a tap opens YTRear. Duplicate taps delivered by HyperOS are
+  debounced.
+- Gated auto-detection, snoozing, and notification restoration on the foreground service, so
+  turning the proxy off leaves every player's native notification and handoff behavior alone.
+- Added launcher icons to the player picker with a pinned, tinted auto-detect row, loaded off the
+  main thread through a small `LruCache` so scrolling and repeated searches stay responsive.
+- Bumped the candidate to version 1.5.0 (`versionCode 18`).
+
 ## 1.4.1 - 2026-11-17
 
 - Expanded `PlayerSelection.NATIVE_REAR_PLAYERS` to match HyperOS's full compiled rear-music

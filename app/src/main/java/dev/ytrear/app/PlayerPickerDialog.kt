@@ -1,6 +1,7 @@
 package dev.ytrear.app
 
 import android.app.Activity
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,10 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
 
 /** Searchable launcher-app picker shown whenever the main activity is opened. */
 object PlayerPickerDialog {
@@ -160,8 +163,9 @@ object PlayerPickerDialog {
         private val currentPackage: String?
     ) : BaseAdapter() {
 
-        private val autoTitle = activity.getString(R.string.auto_detect_option_title)
-        private val autoSummary = activity.getString(R.string.auto_detect_option_summary)
+        val autoTitle = activity.getString(R.string.auto_detect_option_title)
+        val autoSummary = activity.getString(R.string.auto_detect_option_summary)
+        private val autoIcon = AppCompatResources.getDrawable(activity, R.drawable.ic_auto_detect)
         private val visible = mutableListOf<PlayerSelection.AppEntry?>().apply {
             add(null)
             addAll(all)
@@ -195,19 +199,24 @@ object PlayerPickerDialog {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: LayoutInflater.from(activity)
-                .inflate(android.R.layout.simple_list_item_2, parent, false)
+                .inflate(R.layout.item_app, parent, false)
             val app = getItem(position)
+            val iconView = view.findViewById<ImageView>(R.id.appIcon)
             val titleView = view.findViewById<TextView>(android.R.id.text1)
             val subtitleView = view.findViewById<TextView>(android.R.id.text2)
             if (app == null) {
                 titleView.text = if (isAuto) "✓ $autoTitle" else autoTitle
                 titleView.setTypeface(null, Typeface.BOLD)
                 subtitleView.text = autoSummary
+                iconView.imageTintList = ColorStateList.valueOf(activity.getColor(R.color.brand))
+                AppIcons.bind(iconView, null, autoIcon)
             } else {
                 val checked = !isAuto && app.packageName == currentPackage
                 titleView.text = if (checked) "✓ ${app.label}" else app.label
                 titleView.setTypeface(null, Typeface.BOLD)
                 subtitleView.text = app.packageName
+                iconView.imageTintList = null
+                AppIcons.bind(iconView, app.packageName, null)
             }
             return view
         }
@@ -241,8 +250,11 @@ object PlayerPickerDialog {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: LayoutInflater.from(activity)
-                .inflate(android.R.layout.simple_list_item_2, parent, false)
+                .inflate(R.layout.item_app, parent, false)
             val app = getItem(position)
+            val iconView = view.findViewById<ImageView>(R.id.appIcon)
+            iconView.imageTintList = null
+            AppIcons.bind(iconView, app.packageName, null)
             view.findViewById<TextView>(android.R.id.text1).apply {
                 text = if (app.packageName in excluded) "✓ ${app.label}" else app.label
                 setTypeface(null, Typeface.BOLD)

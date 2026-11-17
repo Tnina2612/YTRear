@@ -28,7 +28,7 @@ class MediaNotificationListener : NotificationListenerService() {
             observing = true
         }
         restorePreviousPlayerMediaNotifications()
-        snoozeActiveTargetMediaNotification()
+        if (RearControlService.isRunning) snoozeActiveTargetMediaNotification()
         Probe.log("MEDIA LISTENER: connected; session access=$attached")
     }
 
@@ -36,6 +36,9 @@ class MediaNotificationListener : NotificationListenerService() {
         super.onNotificationPosted(sbn)
         if (sbn == null || sbn.packageName == packageName) return
         if (!sbn.notification.extras.containsKey(Notification.EXTRA_MEDIA_SESSION)) return
+        // Nothing is being proxied while the service is off, so leave every player's own
+        // notification and auto-detection alone in that state.
+        if (!RearControlService.isRunning) return
         if (PlayerSelection.isAuto(this) && PlayerSelection.isAutoCandidate(this, sbn.packageName)) {
             MediaHub.onCandidateMediaNotification(this)
         }
@@ -119,7 +122,7 @@ class MediaNotificationListener : NotificationListenerService() {
 
         val target = MediaHub.targetPackage ?: PlayerSelection.targetPackage(this)
         pending.forEach { previousPackage ->
-            if (previousPackage == target) {
+            if (previousPackage == target && RearControlService.isRunning) {
                 // Auto mode switched back before the restore ran; keep it snoozed.
                 handled += previousPackage
                 return@forEach
@@ -146,6 +149,34 @@ class MediaNotificationListener : NotificationListenerService() {
         PlayerSelection.markRestoresHandled(this, handled)
     }
 
+    /**
+     * Reposts the selected player's snoozed MediaStyle notification after the proxy is turned
+     * off. Ordinary listeners cannot unsnooze directly, so the record is rescheduled with a
+     * short delay and comes back through the normal notification pipeline.
+     */
+    private fun restoreSnoozedTargetMediaNotification() {
+        val target = PlayerSelection.targetPackage(this) ?: return
+        val snoozed = try {
+            snoozedNotifications.orEmpty()
+        } catch (e: SecurityException) {
+            Probe.log("MEDIA LISTENER: cannot inspect snoozed notifications (${e.javaClass.simpleName})")
+            return
+        }
+        snoozed
+            .filter {
+                it.packageName == target &&
+                    it.notification.extras.containsKey(Notification.EXTRA_MEDIA_SESSION)
+            }
+            .forEach { sbn ->
+                try {
+                    snoozeNotification(sbn.key, RELEASE_MEDIA_DELAY_MS)
+                    Probe.log("MEDIA LISTENER: released proxy snooze (${sbn.packageName})")
+                } catch (e: SecurityException) {
+                    Probe.log("MEDIA LISTENER: notification release failed (${e.javaClass.simpleName})")
+                }
+            }
+    }
+
     private fun snoozeTargetMediaNotification(sbn: StatusBarNotification) {
         try {
             snoozeNotification(sbn.key, TARGET_MEDIA_SNOOZE_MS)
@@ -161,6 +192,7 @@ class MediaNotificationListener : NotificationListenerService() {
     companion object {
         private const val TARGET_MEDIA_SNOOZE_MS = 30L * 24L * 60L * 60L * 1000L
         private const val RESTORE_MEDIA_DELAY_MS = 250L
+        private const val RELEASE_MEDIA_DELAY_MS = 250L
 
         @Volatile
         private var activeInstance: MediaNotificationListener? = null
@@ -181,6 +213,21 @@ class MediaNotificationListener : NotificationListenerService() {
                     ComponentName(context, MediaNotificationListener::class.java)
                 )
             }
+        }
+
+        /** Returns the selected player's own notification when the proxy is turned off. */
+        fun restoreCurrentTarget(context: android.content.Context) {
+            val app = context.applicationContext
+            val listener = activeInstance
+            if (listener != null) {
+                listener.restoreSnoozedTargetMediaNotification()
+                return
+            }
+            val target = PlayerSelection.targetPackage(app) ?: return
+            PlayerSelection.queueRestore(app, target)
+            NotificationListenerService.requestRebind(
+                ComponentName(app, MediaNotificationListener::class.java)
+            )
         }
     }
 }

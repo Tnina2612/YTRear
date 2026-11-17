@@ -17,6 +17,15 @@
         <item name="android:insetBottom">4dp</item>
     </style>
 
+    <!-- Compact text button used for actions inside the setup checklist rows. -->
+    <style name="Widget.YTRear.Button.RowAction" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textSize">13sp</item>
+        <item name="android:insetTop">4dp</item>
+        <item name="android:insetBottom">4dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+
     <style name="TextAppearance.YTRear.SectionLabel" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.08</item>

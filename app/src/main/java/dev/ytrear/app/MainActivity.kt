@@ -3,6 +3,7 @@ package dev.ytrear.app
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -12,10 +13,13 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -53,11 +57,18 @@ class MainActivity : AppCompatActivity() {
 
         b.btnChoosePlayer.setOnClickListener { showPlayerPicker() }
         b.btnExcludedPlayers.setOnClickListener { showExcludedPlayers() }
-        b.btnNotificationAccess.setOnClickListener { openNotificationAccess() }
-        b.btnBatteryAccess.setOnClickListener { openBatterySettings() }
+        b.btnSetupAccess.setOnClickListener { openNotificationAccess() }
+        b.btnSetupBattery.setOnClickListener { openBatterySettings() }
+        b.btnSetupAutostart.setOnClickListener { openAutostartSettings() }
+        b.chkAutostart.setOnCheckedChangeListener { _, checked ->
+            if (Setup.isAutostartConfirmed(this) == checked) return@setOnCheckedChangeListener
+            Setup.setAutostartConfirmed(this, checked)
+            refresh()
+        }
         b.btnController.setOnClickListener { startSelectedPlayerProxy() }
         b.btnAdvanced.setOnClickListener { toggleAdvanced() }
         b.btnRefresh.setOnClickListener { refresh() }
+        b.btnLanguage.setOnClickListener { showLanguagePicker() }
 
         refresh()
         handleProbeExtra(intent)
@@ -124,6 +135,8 @@ class MainActivity : AppCompatActivity() {
         val nowPlaying = MediaHub.state
         val isAuto = PlayerSelection.isAuto(this)
         val targetLabel = PlayerSelection.targetLabel(this)
+        val batteryOk = isIgnoringBatteryOptimizations()
+        val autostartOk = Setup.isAutostartConfirmed(this)
 
         val stage = stage(access, running, nowPlaying)
         b.statusDot.backgroundTintList = ColorStateList.valueOf(getColor(stage.dot))
@@ -139,9 +152,40 @@ class MainActivity : AppCompatActivity() {
             if (art != null) b.art.setImageBitmap(art) else b.art.setImageDrawable(null)
         }
 
-        // Setup step one disappears for good once it is done; step two stays as a manual retry.
-        b.btnNotificationAccess.isVisible = !access
-        b.btnBatteryAccess.isVisible = !isIgnoringBatteryOptimizations()
+        // The warning only appears on a firmware build this release was not validated against.
+        b.fwWarning.isVisible = !Firmware.isVerified()
+        b.fwDetail.text = getString(
+            R.string.firmware_warning_detail,
+            Firmware.testedLabel,
+            Firmware.label()
+        )
+
+        // Battery exemption and notification access can be read back; HyperOS autostart cannot,
+        // so that row records the user's confirmation after they visit the system screen.
+        b.setupCard.isVisible = !(access && batteryOk && autostartOk)
+
+        b.setupAccessDot.backgroundTintList =
+            ColorStateList.valueOf(getColor(if (access) R.color.state_ok else R.color.state_bad))
+        b.setupAccessState.setText(
+            if (access) R.string.setup_access_state_ok else R.string.setup_access_state_missing
+        )
+        b.btnSetupAccess.isVisible = !access
+
+        b.setupBatteryDot.backgroundTintList =
+            ColorStateList.valueOf(getColor(if (batteryOk) R.color.state_ok else R.color.state_wait))
+        b.setupBatteryState.setText(
+            if (batteryOk) R.string.setup_battery_state_ok else R.string.setup_battery_state_missing
+        )
+        b.btnSetupBattery.isVisible = !batteryOk
+
+        b.setupAutostartDot.backgroundTintList =
+            ColorStateList.valueOf(getColor(if (autostartOk) R.color.state_ok else R.color.state_wait))
+        b.setupAutostartState.setText(
+            if (autostartOk) R.string.setup_autostart_state_ok
+            else R.string.setup_autostart_state_missing
+        )
+        if (b.chkAutostart.isChecked != autostartOk) b.chkAutostart.isChecked = autostartOk
+
         b.btnChoosePlayer.text = when {
             isAuto && targetLabel != null -> getString(R.string.auto_player_active, targetLabel)
             isAuto -> getString(R.string.auto_player_waiting)
@@ -190,6 +234,9 @@ class MainActivity : AppCompatActivity() {
                 "Battery optimization: " +
                     "${if (isIgnoringBatteryOptimizations()) "IGNORED" else "OPTIMIZED"}\n"
             )
+            append("Autostart confirmed: ${if (Setup.isAutostartConfirmed(this@MainActivity)) "YES" else "NO"}\n")
+            append("Firmware: ${Firmware.label()}\n")
+            append("Firmware support: ${if (Firmware.isVerified()) "VERIFIED" else "UNVERIFIED"}\n")
             append("Media session access: ${if (MediaHub.connected) "CONNECTED" else "DISCONNECTED"}\n")
             append("Rear control service: ${if (RearControlService.isRunning) "RUNNING" else "STOPPED"}\n")
             append("Target session: ${nowPlaying?.title?.ifBlank { "active" } ?: "not active"}\n")
@@ -211,6 +258,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun openNotificationAccess() {
         startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+
+    /**
+     * HyperOS exposes autostart on a dedicated security-center screen. Other builds fall back to
+     * the app info page, where some vendors place the same toggle.
+     */
+    private fun openAutostartSettings() {
+        val candidates = listOf(
+            Intent().setComponent(
+                ComponentName(
+                    "com.miui.securitycenter",
+                    "com.miui.permcenter.autostart.AutoStartManagementActivity"
+                )
+            ),
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                "package:$packageName".toUri()
+            )
+        )
+        for (intent in candidates) {
+            try {
+                startActivity(intent)
+                return
+            } catch (_: ActivityNotFoundException) {
+                // Try the next, less specific screen.
+            } catch (_: SecurityException) {
+                // The OEM activity exists but is not exported for this caller.
+            }
+        }
     }
 
     private fun isIgnoringBatteryOptimizations(): Boolean =

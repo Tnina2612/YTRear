@@ -21,7 +21,8 @@ forwards native widget callbacks to YouTube Music.
 ```text
 Model            25098PN5AC (Xiaomi 17 Pro, codename pandora)
 Android          16 / SDK 36
-HyperOS          OS3.0.318.0.WBLCNXM (China ROM)
+HyperOS          OS3.0.318.0.WBLCNXM (China ROM, original validation)
+                 OS4.0.6.0.XBLCNXM (current; rear path revalidated 2026-11-18)
 ```
 
 | Property | Rear panel | Main panel |
@@ -210,6 +211,7 @@ firmware and should not be resumed unless the firmware or product constraints ch
 | 1.4.0 | Opt-in auto-detect mode follows the most recently playing eligible session with leading-edge rank priming and per-app exclusions |
 | 1.4.1 | Full HyperOS native rear-player allowlist excluded; obsolete `SYSTEM_ALERT_WINDOW` and overlay/custom-widget probes removed; GitHub Actions CI added |
 | 1.5.0 | Battery-optimization setup prompt, Quick Settings on/off tile, and app icons in the player picker |
+| 1.5.1 | Setup checklist with autostart confirmation, firmware verification for OS3/OS4, and Vietnamese localization with an in-app language picker |
 
 Old APK sizes, hashes, transient installation state, and superseded handoff instructions were
 removed from the active documentation. The raw device traces behind these findings were captured
@@ -228,7 +230,10 @@ on a personal device and are not published; the durable conclusions are recorded
 | `RearControlService.kt` | Keeps the proxy controller alive in a foreground service and tears it down cleanly on an explicit stop |
 | `YTRearTileService.kt` | Quick Settings tile that toggles the proxy and opens the app when setup is incomplete |
 | `RearButtonReceiver.kt` | Forwards compact media-notification action taps into `MediaHub` |
-| `MainActivity.kt` | Setup/status UI plus collapsed read-only diagnostics |
+| `Setup.kt` | Persists the HyperOS autostart confirmation that the system does not expose |
+| `Firmware.kt` | Matches the running HyperOS build against the verified-build list |
+| `MainActivity.kt` | Setup/status UI, language picker, and collapsed read-only diagnostics |
+| `values-vi/strings.xml` | Complete Vietnamese UI and notification strings |
 | `PlayerPickerDialog.kt`, `AppIcons.kt` | Searchable picker and its background launcher-icon loader |
 | `Displays.kt`, `Probe.kt` | Display enumeration and in-memory diagnostic log |
 

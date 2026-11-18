@@ -3,14 +3,18 @@
 ## Source
 
 The untouched 1.2 source is pinned at tag `baseline-v1.2` and commit
-`9044cf025908a08b81141c60fda871e14b20fec4`. The published multi-player work is on `main`.
+`9044cf025908a08b81141c60fda871e14b20fec4`. The published multi-player history is on `main`. The
+1.5.1 localization/setup/firmware release is prepared on `feat/v1.5.1-add-vietnamese`.
 
 ```powershell
 # Stable 1.2 source (detached checkout of the immutable baseline tag)
 git switch --detach baseline-v1.2
 
-# Return to the current multi-player source
+# Published multi-player source
 git switch main
+
+# 1.5.1 release work
+git switch feat/v1.5.1-add-vietnamese
 ```
 
 ## Device APK
@@ -29,12 +33,27 @@ releases\YTRear-1.3.2-player-picker-candidate.apk
 SHA-256 9E1314CF8359614F9562A569C7E1CE0950A7D57F295C56550CC7C6A34B995D3E
 ```
 
-The current 1.5.0 battery/tile/picker candidate is:
+The 1.5.0 battery/tile/picker release is archived at:
 
 ```text
-app\build\outputs\apk\debug\app-debug.apk (1.5.0, versionCode 18)
-SHA-256 E4088CD034A2D72D07414FAAC79523A984E147B8F801C3DEA9B8C89D44084664
+releases\YTRear-1.5.0-debug.apk (1.5.0, versionCode 18)
+SHA-256 DC3241D4B4F7A5573134563CB04F8BE208BC6BC753228BDFE738E069CFC6962B
 ```
+
+The candidate installed for the 1.5.0 device run hashed
+`E4088CD034A2D72D07414FAAC79523A984E147B8F801C3DEA9B8C89D44084664` instead (see the note on
+reproducibility below).
+
+The 1.5.1 localization/setup/firmware release is archived at:
+
+```text
+releases\YTRear-1.5.1-debug.apk (1.5.1, versionCode 19)
+SHA-256 1F7AE9113AE52F118469ED1DD7DEBD07804B64BEC97312E956BB086A100A395B
+```
+
+This is the latest release rollback target. It upgrades over 1.5.0 in place and keeps app data,
+notification access, and the saved player selection. Both 1.5.x APKs live in the gitignored
+`releases/` directory.
 
 The previous 1.4.1 cleanup candidate is:
 
@@ -61,8 +80,14 @@ With `$adb` and `$DEVICE` set as in [Testing](TESTING.md):
 # Roll back while preserving app data and permissions.
 & $adb -s $DEVICE install -r -d releases\YTRear-1.2-installed-baseline.apk
 
+# Install the current 1.5.1 release.
+& $adb -s $DEVICE install -r releases\YTRear-1.5.1-debug.apk
+
+# Roll back to the 1.5.0 release.
+& $adb -s $DEVICE install -r -d releases\YTRear-1.5.0-debug.apk
+
 # Return to the archived multi-player build.
-& $adb -s $DEVICE install -r releases\YTRear-1.4.0-debug.apk
+& $adb -s $DEVICE install -r -d releases\YTRear-1.4.0-debug.apk
 ```
 
 The downgrade/upgrade route was successfully exercised on the test phone with the 1.3 candidate.

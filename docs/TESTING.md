@@ -1,5 +1,51 @@
 # YTRear testing
 
+## Version 1.5.1 localization, setup, and firmware check
+
+Version 1.5.1 adds a consolidated **Setup** checklist, firmware verification for HyperOS OS3 and
+OS4, Vietnamese localization, and a language picker. The release reports `versionCode 19` /
+`versionName 1.5.1`.
+
+### Automated and on-device check — 2026-11-18
+
+- [x] `assembleDebug` and `lintDebug` completed with zero lint errors (8 pre-existing
+  dependency/label warnings).
+- [x] The APK installs over the 1.5.0 build as `com.luna.music`, `versionCode 19`, and keeps
+  notification access, the auto-detect target, and the Doze whitelist entry.
+- [x] The **Setup** card renders all three rows. Notification access and battery read as
+  **Granted** / **Unrestricted**; autostart reads **Not confirmed** until the local confirmation is
+  set.
+- [x] Removing `com.luna.music` from the Doze whitelist changes the battery row to **Restricted** and
+  restores the **Set** action; adding it back returns the row to **Unrestricted** after reopening the
+  app.
+- [x] Writing `autostart_confirmed=true` in `shared_prefs/setup_state.xml` turns the autostart row
+  green, checks the checkbox, and hides the card once all three rows are complete. Restoring `false`
+  brings the card back.
+- [x] Firmware verification recognizes the current `OS4.0.6.0.XBLCNXM` build and hides the
+  **Advanced** warning. A temporary verification-list change confirmed the warning appears for an
+  unlisted build, then the list was restored; `OS3.0.318.0.WBLCNXM` remains in the verified set.
+- [x] The rear-screen controls remained stable on OS4 during the user's physical validation.
+- [x] The language dialog shows **Theo hệ thống**, **English**, and **Tiếng Việt**, with the current
+  choice selected. Switching with `cmd locale` to `vi`, `en`, and the empty system list changed the
+  full UI and survived force-stop/relaunch.
+- [x] Vietnamese resources are packaged for all app strings; the foreground-service channel/title
+  and body plus the proxy notification appeared in Vietnamese.
+- [x] The globe button is present at the top-right with the `Ngôn ngữ` accessibility label and opens
+  the dialog.
+
+Physical taps for the language options, **Open** autostart, the autostart checkbox, and **Set**
+battery were not injected because firmware blocks `INJECT_EVENTS`; they still need a person:
+
+- [ ] Tap each language option and confirm the activity recreates and the setting persists.
+- [ ] Open the HyperOS autostart screen, enable YTRear, and tick **Autostart is enabled**.
+- [ ] Tap **Set** from the Setup card and confirm the battery exemption screen opens and the row
+  turns green on return.
+
+The 1.5.1 release APK is archived as `releases\YTRear-1.5.1-debug.apk` (12,293,031 bytes). It
+reports `com.luna.music` version 1.5.1 (`versionCode 19`), and its SHA-256 is
+`1F7AE9113AE52F118469ED1DD7DEBD07804B64BEC97312E956BB086A100A395B`. The archive is local and
+gitignored under `releases/`; upload this exact file and checksum to the GitHub release.
+
 ## Version 1.5.0 battery, tile, and picker candidate
 
 Version 1.5.0 keeps the 1.4.1 behavior and adds three user-facing changes: a battery-optimization
@@ -43,7 +89,10 @@ firmware (`INJECT_EVENTS`), so these taps still need a person:
   the service is stopped).
 
 The packaged 1.5.0 candidate APK SHA-256 is
-`E4088CD034A2D72D07414FAAC79523A984E147B8F801C3DEA9B8C89D44084664`.
+`E4088CD034A2D72D07414FAAC79523A984E147B8F801C3DEA9B8C89D44084664`. The archived copy at
+`releases\YTRear-1.5.0-debug.apk` hashes
+`DC3241D4B4F7A5573134563CB04F8BE208BC6BC753228BDFE738E069CFC6962B`; debug builds are not
+byte-for-byte reproducible, so compare against the hash recorded for that exact file.
 
 ## Version 1.4.1 cleanup candidate
 
@@ -162,7 +211,9 @@ The installed candidate APK SHA-256 is
 
 ## Version 1.2 stable baseline
 
-This is the validation record for the baseline build tagged `baseline-v1.2`.
+This is the validation record for the baseline build tagged `baseline-v1.2`. It was captured on
+HyperOS `OS3.0.318.0.WBLCNXM`; the test phone has since moved to `OS4.0.6.0.XBLCNXM`, whose
+localization/setup regression is recorded at the top of this page.
 
 ## Baseline
 

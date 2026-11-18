@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.5.1 - 2026-11-18
+
+- Added a **Setup** checklist that combines notification access, battery exemption, and HyperOS
+  autostart in one card. Rows show their current state, link to the relevant system screen, and the
+  card hides once all three are complete.
+- HyperOS does not expose its autostart state to apps, so YTRear now records a user confirmation
+  (`Setup.kt`) after opening the autostart screen. A local note reminds users to keep YTRear in
+  Recents, because swiping it away is treated as a force-stop.
+- Added firmware verification for `OS3.0.318.0.WBLCNXM` and `OS4.0.6.0.XBLCNXM` (`Firmware.kt`).
+  Unverified builds show a warning in **Advanced**, and diagnostics report the running build and
+  support state.
+- Added complete **Vietnamese localization** and a top-right language button with **Theo hệ thống**,
+  **English**, and **Tiếng Việt** choices. The app uses AppCompat per-app locales with
+  `android:localeConfig` plus `autoStoreLocales` for API < 33, and the choice persists across
+  restarts.
+- Localized the foreground-service channel/title/body, the proxy notification channel, and the
+  media notification actions.
+- Bumped the release to version 1.5.1 (`versionCode 19`). Upgrading from 1.5.0 keeps app data,
+  notification access, and the saved player selection.
+
 ## 1.5.0 - 2026-11-17
 
 - Added a battery setup prompt: the main screen checks

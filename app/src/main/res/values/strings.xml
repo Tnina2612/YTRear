@@ -53,6 +53,19 @@
     <string name="language_system">System default</string>
     <string name="language_english" translatable="false">English</string>
     <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_service">Rear controls service</string>
+    <string name="notification_channel_proxy">Proxy media session</string>
+    <string name="notification_service_title">Rear controller for %1$s</string>
+    <string name="notification_service_text">Allowlisted media proxy is active</string>
+    <string name="notification_now_playing">Now playing</string>
+    <string name="notification_selected_player">Selected player</string>
+    <string name="action_previous">Previous</string>
+    <string name="action_play">Play</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_next">Next</string>
 
     <!-- Status card -->
     <string name="state_player_title">Choose a player</string>

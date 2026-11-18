@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YTRear</string>
+    <string name="tagline">Điều khiển màn hình sau cho trình phát nhạc của bạn</string>
+
+    <!-- Primary actions -->
+    <string name="choose_player">Chọn trình phát</string>
+    <string name="selected_player">Trình phát: %1$s</string>
+    <string name="auto_player_waiting">Trình phát: Tự phát hiện</string>
+    <string name="auto_player_active">Trình phát: Tự động (%1$s)</string>
+    <string name="choose_player_title">Bạn muốn chuyển tiếp trình phát nào?</string>
+    <string name="player_picker_detail">Chọn tự phát hiện để đi theo bất kỳ ứng dụng nhạc nào bắt đầu phát, hoặc chọn một ứng dụng có phiên media chuẩn của Android. Những ứng dụng Xiaomi đã hỗ trợ sẵn trên màn hình sau (như Spotify, Xiaomi Music, QQ Music và NetEase Cloud Music) sẽ không hiện ở đây.</string>
+    <string name="auto_detect_option_title">Tự phát hiện trình phát đang hoạt động</string>
+    <string name="auto_detect_option_summary">Tự chuyển sang ứng dụng phù hợp khi ứng dụng đó bắt đầu phát</string>
+    <string name="excluded_apps_none">Ứng dụng loại trừ: Không có</string>
+    <string name="excluded_apps_count">Ứng dụng loại trừ (%1$d)</string>
+    <string name="excluded_apps_title">Loại trừ khỏi tự phát hiện</string>
+    <string name="excluded_apps_detail">Ứng dụng được chọn sẽ bị tự phát hiện bỏ qua và giữ thông báo nhạc riêng.</string>
+    <string name="done">Xong</string>
+    <string name="search_apps">Tìm ứng dụng hoặc tên gói</string>
+    <string name="keep_current_player">Giữ nguyên</string>
+    <string name="not_now">Để sau</string>
+    <string name="start_rear_controls">Bật điều khiển màn sau</string>
+    <string name="refresh_rear_controls">Làm mới điều khiển màn sau</string>
+    <string name="daily_hint">Chọn một trình phát, mở nó rồi nhấn phát — thẻ màn sau sẽ tự xuất hiện.</string>
+    <string name="daily_hint_auto">Mở bất kỳ trình phát nhạc nào và nhấn phát — YTRear sẽ tự chuyển thẻ màn sau.</string>
+
+    <!-- Setup checklist -->
+    <string name="setup_title">Thiết lập</string>
+    <string name="setup_detail">Ba cài đặt này giúp thẻ màn sau tiếp tục hoạt động khi màn hình tắt.</string>
+    <string name="setup_access_title">Quyền truy cập thông báo</string>
+    <string name="setup_access_state_ok">Đã cấp</string>
+    <string name="setup_access_state_missing">Bắt buộc — YTRear không thể đọc trình phát nếu thiếu quyền này</string>
+    <string name="setup_access_action">Bật</string>
+    <string name="setup_battery_title">Pin: Không hạn chế</string>
+    <string name="setup_battery_state_ok">Không hạn chế</string>
+    <string name="setup_battery_state_missing">Bị hạn chế — HyperOS có thể đóng băng ứng dụng</string>
+    <string name="setup_battery_action">Đặt</string>
+    <string name="setup_autostart_title">Tự khởi động</string>
+    <string name="setup_autostart_state_ok">Đã xác nhận</string>
+    <string name="setup_autostart_state_missing">Chưa xác nhận — trình nghe có thể không kết nối lại sau khi khởi động lại máy</string>
+    <string name="setup_autostart_action">Mở</string>
+    <string name="setup_autostart_confirm">Đã bật tự khởi động</string>
+    <string name="setup_recents_note">Hãy giữ YTRear trong mục Ứng dụng gần đây. Vuốt bỏ ứng dụng sẽ bị coi là buộc dừng.</string>
+
+    <!-- Firmware warning -->
+    <string name="firmware_warning_title">Firmware chưa được kiểm chứng</string>
+    <string name="firmware_warning_detail">YTRear đã được kiểm chứng trên %1$s. Máy này đang chạy %2$s, nên hoạt động của màn hình sau có thể khác.</string>
+
+    <!-- Language picker -->
+    <string name="language">Ngôn ngữ</string>
+    <string name="language_title">Ngôn ngữ ứng dụng</string>
+    <string name="language_system">Theo hệ thống</string>
+    <string name="cancel">Hủy</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_service">Dịch vụ điều khiển màn sau</string>
+    <string name="notification_channel_proxy">Phiên media chuyển tiếp</string>
+    <string name="notification_service_title">Bộ điều khiển màn sau cho %1$s</string>
+    <string name="notification_service_text">Bộ chuyển tiếp media đã được cho phép đang hoạt động</string>
+    <string name="notification_now_playing">Đang phát</string>
+    <string name="notification_selected_player">Trình phát đã chọn</string>
+    <string name="action_previous">Trước</string>
+    <string name="action_play">Phát</string>
+    <string name="action_pause">Tạm dừng</string>
+    <string name="action_next">Tiếp</string>
+
+    <!-- Status card -->
+    <string name="state_player_title">Chọn một trình phát</string>
+    <string name="state_player_detail">Chọn ứng dụng bạn muốn đưa phát nhạc lên màn hình sau, hoặc chọn tự phát hiện.</string>
+    <string name="state_setup_title">Cần thiết lập</string>
+    <string name="state_setup_detail">YTRear cần quyền truy cập thông báo để đọc nội dung trình phát đã chọn đang phát.</string>
+    <string name="state_setup_detail_auto">YTRear cần quyền truy cập thông báo để phát hiện và đọc các trình phát nhạc đang hoạt động.</string>
+    <string name="state_start_title">Gần sẵn sàng</string>
+    <string name="state_start_detail">Nhấn “Bật điều khiển màn sau” một lần để đưa thẻ lên màn hình sau.</string>
+    <string name="state_waiting_title">Đang chờ nhạc</string>
+    <string name="state_waiting_detail">Mở trình phát đã chọn và nhấn phát. Thẻ màn sau sẽ xuất hiện trong một hoặc hai giây.</string>
+    <string name="state_waiting_detail_auto">Bắt đầu phát trong bất kỳ trình phát nhạc nào. Thẻ màn sau sẽ xuất hiện trong một hoặc hai giây.</string>
+    <string name="state_linking_title">Đang kết nối</string>
+    <string name="state_linking_detail">Đang chuyển phát nhạc lên màn hình sau…</string>
+    <string name="state_ready_title">Điều khiển màn sau đang hoạt động</string>
+    <string name="state_ready_detail">Phát, tạm dừng, chuyển bài và quay lại đều hoạt động trên màn hình sau khi điện thoại đã khóa.</string>
+    <string name="unknown_track">Không rõ bài hát</string>
+    <string name="unknown_artist">Không rõ nghệ sĩ</string>
+    <string name="album_art">Ảnh bìa</string>
+
+    <!-- Quick Settings tile -->
+    <string name="tile_setup_needed">Cần thiết lập</string>
+    <string name="tile_off">Nhấn để bật</string>
+    <string name="tile_on">Điều khiển màn sau đang bật</string>
+    <string name="tile_auto">Tự động · %1$s</string>
+    <string name="tile_manual">Thủ công · %1$s</string>
+
+    <!-- Diagnostics -->
+    <string name="show_advanced">Nâng cao</string>
+    <string name="hide_advanced">Ẩn nâng cao</string>
+    <string name="advanced_note">Chẩn đoán trực tiếp về phiên, màn hình và chuyển tiếp. Không cần cho việc sử dụng hằng ngày.</string>
+    <string name="action_refresh">Làm mới</string>
+    <string name="label_status">Trạng thái</string>
+    <string name="label_displays">Màn hình</string>
+    <string name="label_log">Nhật ký</string>
+</resources>

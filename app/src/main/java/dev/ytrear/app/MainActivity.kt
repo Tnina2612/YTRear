@@ -253,6 +253,43 @@ class MainActivity : AppCompatActivity() {
         if (show) refresh()
     }
 
+    /**
+     * Per-app language choice. An empty locale list follows the system language; AppCompat stores
+     * the selection itself on API < 33, while newer versions use the framework LocaleManager.
+     */
+    private fun showLanguagePicker() {
+        val current = AppCompatDelegate.getApplicationLocales()
+        val currentTag = if (current.isEmpty) null else current.toLanguageTags()
+        val tags = arrayOf<String?>(null, "en", "vi")
+        val labels = arrayOf<CharSequence>(
+            getString(R.string.language_system),
+            getString(R.string.language_english),
+            getString(R.string.language_vietnamese)
+        )
+        val checked = when {
+            currentTag == null -> 0
+            currentTag.startsWith("vi", ignoreCase = true) -> 2
+            currentTag.startsWith("en", ignoreCase = true) -> 1
+            else -> 0
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.language_title)
+            .setSingleChoiceItems(labels, checked) { dialog, which ->
+                dialog.dismiss()
+                val tag = tags[which]
+                AppCompatDelegate.setApplicationLocales(
+                    if (tag == null) {
+                        LocaleListCompat.getEmptyLocaleList()
+                    } else {
+                        LocaleListCompat.forLanguageTags(tag)
+                    }
+                )
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
     private fun hasNotificationAccess(): Boolean =
         NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
 

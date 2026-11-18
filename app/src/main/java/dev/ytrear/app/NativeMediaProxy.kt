@@ -130,9 +130,10 @@ object NativeMediaProxy {
             return
         }
 
-        val playerName = PlayerSelection.targetLabel(app) ?: "Selected player"
+        val playerName = PlayerSelection.targetLabel(app)
+            ?: app.getString(R.string.notification_selected_player)
         val title = state.title.ifBlank { playerName }
-        val artist = state.artist.ifBlank { "Now playing" }
+        val artist = state.artist.ifBlank { app.getString(R.string.notification_now_playing) }
         val payload = Payload(
             pkg = state.pkg,
             title = title,
@@ -504,15 +505,13 @@ object NativeMediaProxy {
         playing: Boolean
     ) {
         val manager = context.getSystemService(NotificationManager::class.java)
-        if (manager.getNotificationChannel(CHANNEL) == null) {
-            manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL,
-                    "Proxy media session",
-                    NotificationManager.IMPORTANCE_LOW
-                )
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL,
+                context.getString(R.string.notification_channel_proxy),
+                NotificationManager.IMPORTANCE_LOW
             )
-        }
+        )
 
         fun button(which: String) = PendingIntent.getBroadcast(
             context,
@@ -548,21 +547,21 @@ object NativeMediaProxy {
             .addAction(
                 Notification.Action.Builder(
                     R.drawable.ic_prev,
-                    "Previous",
+                    context.getString(R.string.action_previous),
                     button(RearButtonReceiver.BUTTON_PREVIOUS)
                 ).build()
             )
             .addAction(
                 Notification.Action.Builder(
                     if (playing) R.drawable.ic_pause else R.drawable.ic_play,
-                    if (playing) "Pause" else "Play",
+                    context.getString(if (playing) R.string.action_pause else R.string.action_play),
                     button(RearButtonReceiver.BUTTON_PLAY_PAUSE)
                 ).build()
             )
             .addAction(
                 Notification.Action.Builder(
                     R.drawable.ic_next,
-                    "Next",
+                    context.getString(R.string.action_next),
                     button(RearButtonReceiver.BUTTON_NEXT)
                 ).build()
             )

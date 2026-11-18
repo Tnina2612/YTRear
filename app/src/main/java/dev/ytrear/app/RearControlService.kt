@@ -68,27 +68,26 @@ class RearControlService : Service() {
 
     private fun foregroundNotification(): Notification {
         val manager = getSystemService(NotificationManager::class.java)
-        if (manager.getNotificationChannel(CHANNEL) == null) {
-            manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL,
-                    "Rear controls service",
-                    NotificationManager.IMPORTANCE_LOW
-                )
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL,
+                getString(R.string.notification_channel_service),
+                NotificationManager.IMPORTANCE_LOW
             )
-        }
+        )
         val open = PendingIntent.getActivity(
             this,
             0,
             Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val label = PlayerSelection.targetLabel(this) ?: "Selected player"
+        val label = PlayerSelection.targetLabel(this)
+            ?: getString(R.string.notification_selected_player)
         lastTitleLabel = label
         return Notification.Builder(this, CHANNEL)
             .setSmallIcon(R.drawable.ic_launcher)
-            .setContentTitle("$label rear controller")
-            .setContentText("Allowlisted media proxy is active")
+            .setContentTitle(getString(R.string.notification_service_title, label))
+            .setContentText(getString(R.string.notification_service_text))
             .setContentIntent(open)
             .setOngoing(true)
             .setCategory(Notification.CATEGORY_SERVICE)
@@ -96,7 +95,8 @@ class RearControlService : Service() {
     }
 
     private fun updateForegroundTitleIfNeeded() {
-        val current = PlayerSelection.targetLabel(this) ?: "Selected player"
+        val current = PlayerSelection.targetLabel(this)
+            ?: getString(R.string.notification_selected_player)
         if (current == lastTitleLabel) return
         getSystemService(NotificationManager::class.java).notify(NOTIF_ID, foregroundNotification())
     }
